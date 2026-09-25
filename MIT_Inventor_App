@@ -1,0 +1,49 @@
+import random
+import firebase_admin
+from firebase_admin import credentials,db
+from tkinter import *
+from PIL import Image,ImageTk
+window=Tk()
+window.geometry("350x500")
+window.config(bg="black")
+window.title("SENSORS OF FOREST WATCH")
+lb1=Label(window,text="SENSORS OF FOREST WATCH",font=("ariel",15,"bold","underline"),fg="yellow",bg="black")
+lb1.place(x=20,y=20)
+
+
+lb_temp=Label(window,text="TEMPERATURE",font=("ariel",15,"bold"),fg="orange",bg="black")
+lb_temp.place(x=80,y=90)
+image_temp=Image.open("temperature.png")
+image_temp=image_temp.resize((50,50))
+image_temp=ImageTk.PhotoImage(image_temp)
+lb_temp_image=Label(window,image=image_temp)
+lb_temp_image.place(x=110,y=150)
+
+lb_sound=Label(window,text="SOUND INTENSITY",font=("ariel",15,"bold"),fg="blue",bg="black")
+lb_sound.place(x=80,y=230)
+image_sound=Image.open("sound.png")
+image_sound=image_sound.resize((50,50))
+image_sound=ImageTk.PhotoImage(image_sound)
+lb_sound_image=Label(window,image=image_sound)
+lb_sound_image.place(x=110,y=290)
+
+lb_temp_value=Label(window,text="90",font=("ariel",20,"bold"),fg="orange",bg="black")
+lb_temp_value.place(x=180,y=155)
+lb_sound_value=Label(window,text="90",font=("ariel",20,"bold"),fg="orange",bg="black")
+lb_sound_value.place(x=180,y=300)
+cred = credentials.Certificate("arduino.json")
+firebase_admin.initialize_app(cred,{"databaseURL":"https://arduino-e0e55-default-rtdb.firebaseio.com/"})
+database=db.reference()
+data=database.get()
+print(data)
+def sensor():
+    temp = random.randint(90,120)
+    sound = random.randint(0,300)
+    database.update({"temperature": temp, "sound intensity": sound})
+    lb_temp_value.config(text=temp)
+    lb_sound_value.config(text=sound)
+    lb_temp_value.after(3000, sensor)
+sensor()
+window.mainloop()
+#ARDUINO PROJECT(smoke level,sound intensity,temperature & humidity)==>FIREBASE==>>MIT APP INVENTRO
+
